@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="org.reactnativeprintermodule">
+          package="com.happygastro.printer.ThermalPrinterPackage">
 
   <uses-permission android:name="android.permission.INTERNET" />
   <!-- Request legacy Bluetooth permissions on older devices. -->

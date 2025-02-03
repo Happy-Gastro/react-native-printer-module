@@ -1,4 +1,4 @@
-package com.reactnativethermalprinter;
+package com.happygastro.printer.ThermalPrinterPackage;
 
 import androidx.annotation.NonNull;
 

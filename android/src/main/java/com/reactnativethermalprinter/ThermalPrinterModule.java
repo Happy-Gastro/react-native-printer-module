@@ -1,4 +1,5 @@
-package com.reactnativethermalprinter;
+package com.happygastro.printer.ThermalPrinterPackage;
+;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
