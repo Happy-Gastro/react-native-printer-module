@@ -1,41 +1,41 @@
-# react-native-thermal-printer
+# React Native Printer BL and IP printer module
+[![react-native-notification-badge](https://badge.fury.io/js/%40happy-gastro%2Freact-native-printer-module.svg)](https://badge.fury.io/js/%40happy-gastro%2Fversion-manager)
+[![GitHub követők](https://img.shields.io/github/followers/Happy-Gastro.svg?style=social&label=Follow&maxAge=259000)](https://github.com/Happy-Gastro?tab=followers)
 
-native bridge for thermal printer
+Native bridge for thermal printer, forked from `react-native-thermal-printer` with additional features.
 
-### :warning: v2 breaking change
+## Description
 
-- :fire: Changed to promise based <-- this might break your code
-- :fire: More flexible error handling
-- :fire: Bugs fixed
+This module provides a bridge for printing on thermal printers using React Native. It supports both network and Bluetooth printing. We must added some editing into Java files to work well with Bluetooth and Hungarian characters and we will add some other features soon.
 
-### Android Only
+### Android Only (Working on iOS)
 
-bridged library:
-https://github.com/DantSu/ESCPOS-ThermalPrinter-Android/tree/3.0.1
+This module bridges the following library:
+[https://github.com/DantSu/ESCPOS-ThermalPrinter-Android/tree/3.0.1](https://github.com/DantSu/ESCPOS-ThermalPrinter-Android/tree/3.0.1)
 
 ## Installation
 
 ```sh
-npm install react-native-thermal-printer
+npm @happy-gastro/install react-native-printer-module
 ```
 
 or
 
 ```sh
-yarn add react-native-thermal-printer
+yarn add @happy-gastro/react-native-printer-module
 ```
 
-### Android Manifest
+### Android Manifest Configuration
 
-make sure you have the following permission in android/app/src/main/AndroidManifest.xml
+Ensure the following permissions are added to `android/app/src/main/AndroidManifest.xml`:
 
-network printing
+**For network printing:**
 
 ```xml
 <uses-permission android:name="android.permission.INTERNET"/>
 ```
 
-bluetooth printing
+**For Bluetooth printing:**
 
 ```xml
 <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -44,125 +44,130 @@ bluetooth printing
 
 ## Usage
 
-### Import the module
+### Import the Module
 
 ```js
-import ThermalPrinterModule from 'react-native-thermal-printer';
+import PrinterModule from 'react-native-printer-module';
 ```
 
-### Set the default config
+### Set Default Configuration
 
 ```js
-ThermalPrinterModule.defaultConfig.ip = '192.168.100.246';
-ThermalPrinterModule.defaultConfig.port = 9100;
-ThermalPrinterModule.defaultConfig.autoCut = false;
-ThermalPrinterModule.defaultConfig.timeout = 30000; // in milliseconds (version >= 2.2.0)
+PrinterModule.defaultConfig.ip = '192.168.100.246';
+PrinterModule.defaultConfig.port = 9100;
+PrinterModule.defaultConfig.autoCut = false;
+PrinterModule.defaultConfig.timeout = 30000; // in milliseconds
 ```
 
 or
 
 ```js
-ThermalPrinterModule.defaultConfig = {
-  ...ThermalPrinterModule.defaultConfig,
+PrinterModule.defaultConfig = {
+  ...PrinterModule.defaultConfig,
   ip: '192.168.100.246',
   port: 9100,
   autoCut: false,
-  timeout: 30000, // in milliseconds (version >= 2.2.0)
+  timeout: 30000, // in milliseconds
 };
 ```
 
-### Send the payload
+### Sending a Print Job
 
 ```js
-// inside async function
+// Inside an async function
 try {
-  await ThermalPrinterModule.printTcp({ payload: 'hello world' });
+  await PrinterModule.printTcp({ payload: 'Hello, world!' });
 } catch (err) {
-  //error handling
   console.log(err.message);
 }
 ```
 
-you can also specify the config each time calling the method
+You can also specify the configuration for each call:
 
 ```js
-// inside async function
+// Inside an async function
 try {
-  await ThermalPrinterModule.printTcp({
+  await PrinterModule.printTcp({
     ip: '192.168.100.246',
     port: 9100,
-    payload: 'hello world',
+    payload: 'Hello, world!',
     printerWidthMM: 50,
-    timeout: 30000, // in milliseconds (version >= 2.2.0)
+    timeout: 30000,
   });
-  await ThermalPrinterModule.printTcp({
+
+  await PrinterModule.printTcp({
     ip: '192.168.100.247',
     port: 9100,
-    payload: 'hello world',
+    payload: 'Hello, world!',
     autoCut: false,
-    timeout: 30000, // in milliseconds (version >= 2.2.0)
+    timeout: 30000,
   });
 } catch (err) {
-  //error handling
   console.log(err.message);
 }
 ```
 
-#### Bluetooth
+#### Bluetooth Printing
 
-pair your bluetooth device and call the printBluetooth method, all configurations remain the same
+Pair your Bluetooth device and use the `printBluetooth` method. The configurations remain the same.
 
-```ts
-// inside async function
+```js
+// Inside an async function
 try {
-  await ThermalPrinterModule.printBluetooth({
-    payload: 'hello world',
+  await PrinterModule.printBluetooth({
+    payload: 'Hello, world!',
     printerNbrCharactersPerLine: 38,
   });
 } catch (err) {
-  //error handling
   console.log(err.message);
 }
 ```
 
-## Method
+## Methods
 
-Support both network and bluetooth printing for now
+Supports both network and Bluetooth printing.
 
-| Name           | Param    | Param Type                                                             | default         |
-| -------------- | -------- | ---------------------------------------------------------------------- | --------------- |
-| printTcp       | `config` | `Partial<PrintTcpInterface> & Pick<PrinterInterface, 'payload'>`       | `defaultConfig` |
-| printBluetooth | `config` | `Partial<PrintBluetoothInterface> & Pick<PrinterInterface, 'payload'>` | `defaultConfig` |
+| Method         | Parameter | Parameter Type                                                         | Default         |
+| -------------- | --------- | ---------------------------------------------------------------------- | --------------- |
+| printTcp       | `config`  | `Partial<PrintTcpInterface> & Pick<PrinterInterface, 'payload'>`       | `defaultConfig` |
+| printBluetooth | `config`  | `Partial<PrintBluetoothInterface> & Pick<PrinterInterface, 'payload'>` | `defaultConfig` |
 
-## Interfaces
+## Interfaces and Configurations
 
-```ts
-interface PrinterInterface {
-  payload: string;
-  autoCut: boolean;
-  openCashbox: boolean;
-  mmFeedPaper: number;
-  printerDpi: number;
-  printerWidthMM: number;
-  printerNbrCharactersPerLine: number;
+```js
+// Default parameters
+function PrinterInterface(payload, autoCut, openCashbox, mmFeedPaper, printerDpi, printerWidthMM, printerNbrCharactersPerLine) {
+  this.payload = payload;
+  this.autoCut = autoCut;
+  this.openCashbox = openCashbox;
+  this.mmFeedPaper = mmFeedPaper;
+  this.printerDpi = printerDpi;
+  this.printerWidthMM = printerWidthMM;
+  this.printerNbrCharactersPerLine = printerNbrCharactersPerLine;
 }
 
-interface PrintTcpInterface extends PrinterInterface {
-  ip: string;
-  port: number;
-  timeout: number;
+// Printing on TCP / IP printers
+function PrintTcpInterface(ip, port, timeout, payload, autoCut, openCashbox, mmFeedPaper, printerDpi, printerWidthMM, printerNbrCharactersPerLine) {
+  PrinterInterface.call(this, payload, autoCut, openCashbox, mmFeedPaper, printerDpi, printerWidthMM, printerNbrCharactersPerLine);
+  this.ip = ip;
+  this.port = port;
+  this.timeout = timeout;
 }
 
-interface PrintBluetoothInterface extends PrinterInterface {}
+// Printing to Bluetooth printers
+function PrintBluetoothInterface(macAddress, payload, autoCut, openCashbox, mmFeedPaper, printerDpi, printerWidthMM, printerNbrCharactersPerLine) {
+  PrinterInterface.call(this, payload, autoCut, openCashbox, mmFeedPaper, printerDpi, printerWidthMM, printerNbrCharactersPerLine);
+  this.macAddress = macAddress;
+}
+
+
 ```
 
-## Config
+### Default Configuration
 
-### Default config
-
-```ts
-let defaultConfig: PrintTcpInterface = {
-  ip: '192.168.192.168',
+```js
+const defaultConfig = {
+  ip: '192.168.1.121',
   port: 9100,
   payload: '',
   autoCut: true,
@@ -173,170 +178,72 @@ let defaultConfig: PrintTcpInterface = {
   printerNbrCharactersPerLine: 42,
   timeout: 30000,
 };
+
+
 ```
 
-### Available config
+### Available Config Options
 
-| Name                        | Type      | Default           | Description                                                                  |
-| --------------------------- | --------- |-------------------| ---------------------------------------------------------------------------- |
-| ip                          | `string`  | `192.168.192.168` | printer ip address                                                           |
-| port                        | `number`  | `9100`            | printer port                                                                 |
-| payload                     | `string`  | ``                | text that you send to the printer                                            |
-| autoCut                     | `boolean` | `true`            | auto cut the paper                                                           |
-| openCashbox                 | `boolean` | `false`           | auto cut and kick the cashbox open                                           |
-| mmFeedPaper                 | `number`  | `20`              | feed paper (millimeters)                                                     |
-| printerDpi                  | `number`  | `203`             | DPI of the connected printer                                                 |
-| printerWidthMM              | `number`  | `80`              | printing width in millimeters                                                |
-| printerNbrCharactersPerLine | `number`  | `42`              | The maximum number of medium sized characters that can be printed on a line. |
-| timeout                     | `number`  | `30000`           | the maximum time to wait before the print is canceled.                       |
+| Name                        | Type      | Default         | Description                      |
+| --------------------------- | --------- |-----------------| -------------------------------- |
+| ip                          | `string`  | `192.168.1.121` | Printer IP address               |
+| port                        | `number`  | `9100`          | Printer port                     |
+| payload                     | `string`  | \`\`            | Text sent to the printer         |
+| autoCut                     | `boolean` | `true`          | Automatically cut the paper      |
+| openCashbox                 | `boolean` | `false`         | Open cashbox after printing      |
+| mmFeedPaper                 | `number`  | `20`            | Paper feed in millimeters        |
+| printerDpi                  | `number`  | `203`           | Printer DPI                      |
+| printerWidthMM              | `number`  | `80`            | Printing width in millimeters    |
+| printerNbrCharactersPerLine | `number`  | `42`            | Maximum characters per line      |
+| timeout                     | `number`  | `30000`         | Timeout duration in milliseconds |
 
-## Payload
-
-same as https://github.com/DantSu/ESCPOS-ThermalPrinter-Android/tree/3.0.1#formatted-text--syntax-guide
-except for the `<img></img>` tag
-
-place the image url directly between the img tags
-
-### example
+### Example
 
 ```js
 const text =
   '[C]<img>https://via.placeholder.com/300.jpg</img>\n' +
   '[L]\n' +
-  "[C]<u><font size='big'>ORDER N°045</font></u>\n" +
+  "[C]<u><font size='big'>ORDER #316-235</font></u>\n" +
   '[L]\n' +
   '[C]================================\n' +
   '[L]\n' +
-  '[L]<b>BEAUTIFUL SHIRT</b>[R]9.99e\n' +
-  '[L]  + Size : S\n' +
-  '[L]\n' +
-  '[L]<b>AWESOME HAT</b>[R]24.99e\n' +
-  '[L]  + Size : 57/58\n' +
-  '[L]\n' +
+  '[L]<b>PRODUCT NAME</b>[R]9.99€\n' +
   '[C]--------------------------------\n' +
-  '[R]TOTAL PRICE :[R]34.98e\n' +
-  '[R]TAX :[R]4.23e\n' +
-  '[L]\n' +
+  '[R]TOTAL PRICE :[R]34.98€\n' +
+  '[R]TAX :[R]4.23€\n' +
   '[C]================================\n' +
-  '[L]\n' +
-  "[L]<font size='tall'>Customer :</font>\n" +
-  '[L]Raymond DUPONT\n' +
-  '[L]5 rue des girafes\n' +
-  '[L]31547 PERPETES\n' +
-  '[L]Tel : +33801201456\n' +
-  '[L]\n' +
-  "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-  "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
-  '[L]\n' +
-  '[L]\n' +
-  '[L]\n' +
-  '[L]\n' +
-  '[L]\n';
+  '[C]Thank You for beeing Our customer:\n' +
+  '[C]Happy Solutions\n' +
+  '[C]www.happysolutions.hu\n\n' +
+  '[C]<barcode type="ean13" height="10">831254784551</barcode>\n' +
+  '[C]<qrcode size="20">http://example.com/</qrcode>\n';
 ```
 
-## Full example
+## Tested Devices
 
-```js
-import React, { useState } from 'react';
-import { SafeAreaView, useColorScheme, Button, TextInput } from 'react-native';
-
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-
-import ThermalPrinterModule from 'react-native-thermal-printer';
-
-ThermalPrinterModule.defaultConfig = {
-  ...ThermalPrinterModule.defaultConfig,
-  ip: '192.168.100.246',
-  port: 9100,
-  timeout: 30000,
-};
-
-const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const [state, setState] = useState({
-    text:
-      '[C]<img>https://via.placeholder.com/300.jpg</img>\n' +
-      '[L]\n' +
-      "[C]<u><font size='big'>ORDER N°045</font></u>\n" +
-      '[L]\n' +
-      '[C]================================\n' +
-      '[L]\n' +
-      '[L]<b>BEAUTIFUL SHIRT</b>[R]9.99e\n' +
-      '[L]  + Size : S\n' +
-      '[L]\n' +
-      '[L]<b>AWESOME HAT</b>[R]24.99e\n' +
-      '[L]  + Size : 57/58\n' +
-      '[L]\n' +
-      '[C]--------------------------------\n' +
-      '[R]TOTAL PRICE :[R]34.98e\n' +
-      '[R]TAX :[R]4.23e\n' +
-      '[L]\n' +
-      '[C]================================\n' +
-      '[L]\n' +
-      "[L]<font size='tall'>Customer :</font>\n" +
-      '[L]Raymond DUPONT\n' +
-      '[L]5 rue des girafes\n' +
-      '[L]31547 PERPETES\n' +
-      '[L]Tel : +33801201456\n' +
-      '[L]\n' +
-      "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-      "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>",
-  });
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  const onPress = async () => {
-    try {
-      console.log('We will invoke the native module here!');
-      await ThermalPrinterModule.printTcp({ payload: state.text });
-
-      //
-      // bluetooth
-      // await ThermalPrinterModule.printBluetooth({ payload: state.text });
-      //
-
-      console.log('done printing');
-    } catch (err) {
-      //error handling
-      console.log(err.message);
-    }
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <TextInput
-        value={state.text}
-        onChangeText={(text) => setState((prev) => ({ ...prev, text }))}
-      />
-      <Button
-        title="Click to invoke your native module!"
-        color="#841584"
-        onPress={onPress}
-      />
-    </SafeAreaView>
-  );
-};
-
-export default App;
-```
-
-## Tested devices
-
-- Epson TM-T82
-- Epson TM-T82X
-- Epson TM-T88VI
-- Epson TM-T20III
+- Epson Printers
+- Bixolon Printers
+- SunMe Devices inner printers
+- iMin Devices inner printers
+- No-name Bluetooth printers
 - Zywell
 - VSC
 - EPPOS
 
 ## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
+# Author
+
+This project is maintained by Farkas Ferenc.
+
+- **Name**: Farkas Ferenc
+- **Email**: [ferenc.farkas@happygastro.hu](mailto:ferenc.farkas@happygastro.hu)
+- **Website**: [www.happysolutions.hu](http://www.happygastro.hu)
+
+## Company
+
+Happy Gastro Ltd.
 
 ## License
-
-MIT
+[MIT](https://choosealicense.com/licenses/mit/)
