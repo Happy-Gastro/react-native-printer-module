@@ -1,6 +1,6 @@
 {
   "name": "@happy-gastro/react-native-printer-module",
-  "version": "1.5.9",
+  "version": "1.5.10",
   "description": "Native bridge for ESC/POS thermal printers (Bluetooth and TCP / IP)",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
